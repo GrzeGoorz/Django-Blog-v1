@@ -26,6 +26,12 @@ from .serializers import ItemSerializer
 from .forms import ItemForm
 
 # ----------------------------------------------------------
+# DLA WYKRESU:
+from matplotlib import pyplot as plt
+from io import BytesIO
+import base64
+import plotly.express as px
+#-----------
 
 
 # Widok dla strony domowej
@@ -55,7 +61,7 @@ class PostListView(ListView):
     model = Post
     template_name = 'blog/home.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
-    paginate_by = 6
+    paginate_by = 4
 
 
 # Klasa widoku listy postów użytkownika
@@ -63,7 +69,7 @@ class UserPostListView(ListView):
     model = Post
     template_name = 'blog/user_posts.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
-    paginate_by = 6\
+    paginate_by = 4
     
 # Pobierz posty dla danego użytkownika
     def get_queryset(self):
@@ -174,6 +180,7 @@ def prace_view(request):
 # ----------------------------------------------------------
 # ----------------------------------------------------------
 # ----------------------------------------------------------
+# LISTA PRZEDMIOTÓW:
 
 def item_list(request):
     items = Item.objects.all()
@@ -210,3 +217,43 @@ def item_delete(request, pk):
 class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
+
+
+
+# ---------- WYKRES - LISTA PRZEDMIOTÓW:
+def generate_pie_chart():
+    # Dane dla wykresu kołowego
+    items = Item.objects.all()
+    product_names = [item.product_name for item in items]
+    quantities = [item.quantity for item in items]
+
+    # Utwórz interaktywny wykres kołowy za pomocą Plotly
+    fig = px.pie(names=product_names, values=quantities, title='PRODUKTY I ILOŚĆ W PROCENTACH')
+
+    # Zwiększ rozmiar czcionki
+    fig.update_layout(
+        font=dict(size=52), 
+        width=1600,  
+        height=1200, 
+    )
+
+    # Zapisz wykres do formatu obrazu
+    image_stream = BytesIO()
+    fig.write_image(image_stream, format='png')
+    image_stream.seek(0)
+    image_data = base64.b64encode(image_stream.read()).decode('utf-8')
+
+    return {
+        'chart_image': f"data:image/png;base64,{image_data}",
+        'items': items,
+    }
+
+def item_list(request):
+    chart_data = generate_pie_chart()
+
+    context = {
+        'chart_image': chart_data['chart_image'],
+        'items': chart_data['items'],  # Przekaż dane produktów do szablonu
+    }
+
+    return render(request, 'blog/item_list.html', context)
