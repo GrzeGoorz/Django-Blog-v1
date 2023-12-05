@@ -1,0 +1,45 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<!--PĘTLA DLA POSTÓW-->
+    {% for post in posts %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+              <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+            </div>
+            <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.content }}</p>
+          </div>
+        </article>
+    {% endfor %}
+    <!--PAGINACJA - NUMERACJA STRONY Z POSTAMI-->
+    {% if is_paginated %}
+
+<!--PAGINACJA - JEŚLI STRONA POSIADA WCZEŚNIEJSZE POSTY (STRONY) DODAJ PAGINACJE DO: STRONY PIERWSZEJ ORAZ DO STRONY O NUMERZE WCZEŚNIEJSZYM-->
+      {% if page_obj.has_previous %}
+        <a class ="btn btn-outline-info mb-4" href="?page=1">Pierwsza</a>
+        <a class ="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Poprzednia</a>
+      {% endif %}
+
+      <!--PĘTLA DLA WYŚWIETLANIA PRZYCISKÓW - OGRANICZA PRZYCISKI -->
+      <!--PAGINACJA - DLA NUMERU STRONY UTWÓRZ PĘTLE-->
+      {% for num in page_obj.paginator.page_range %}
+      <!-- PAGINACJA - ITERACJA PRZEZ NUMERY STRON -->
+          {% if page_obj.number == num %}
+          <!-- Jeśli bieżąca strona to wyświetl przycisk aktywny -->
+          <a class ="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+          <!-- Jeśli num jest mniejszy od aktywnej strony to dodaj '-3' i dodaj 3 -->
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a class ="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+          {% endif %}
+      {% endfor %}
+
+      <!--PAGINACJA - JEŚLI STRONA POSIADA NASTĘPNE POSTY (STRONY) DODAJ PAGINACJE DO: STRONY KOLEJNEJ ORAZ DO STRONY O NUMERZE OSTATNIM-->
+      {% if page_obj.has_next %}
+        <a class ="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Następna</a>
+        <a class ="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Ostatnia</a>
+      {% endif %}
+
+    {% endif %}
+{% endblock content %}

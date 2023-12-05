@@ -1,0 +1,24 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="content-section pt-3">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">WYLOGOWANO</legend>
+                {{ form|crispy }}
+                <small class="text-muted">
+                    Nastąpiło bezpieczne wylogowanie z twojego konta! <a class="bl-2" href="{% url 'DPM' %}"> Do zobaczenia! </a>
+                </small>
+            </fieldset>
+            
+            <div class="form-group pt-3">
+                <a class="btn btn-outline-info" href="{% url 'login' %}">Zaloguj się ponownie</a>
+            </div>
+            
+        </form>
+       
+
+    </div>
+
+{% endblock content %}

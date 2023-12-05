@@ -1,0 +1,36 @@
+<!-- templates/item_list.html -->
+{% extends 'blog/base.html' %}
+
+{% block content %}
+
+<br>
+<h2>Lista Produktów</h2>
+<br>
+<table class="table table-striped-columns">
+  <thead>
+    <tr class="table-primary">
+      <th scope="col">Produkt</th>
+      <th scope="col">Ilość</th>
+      <th scope="col">Lokalizacja</th>
+      <th scope="col">Akcje</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <tr>
+      <td>{{ item.product_name }}</td>
+      <td>{{ item.quantity }}</td>
+      <td>{{ item.location_name }}</td>
+      <td>
+        <a href="{% url 'item_update' pk=item.pk %}" class="btn btn-warning btn-sm">Edytuj</a>
+        <a href="{% url 'item_delete' pk=item.pk %}" class="btn btn-danger btn-sm">Usuń</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<br>
+<a href="{% url 'item_create' %}" class="btn btn-success">Dodaj nowy produkt</a>
+
+
+{% endblock %}

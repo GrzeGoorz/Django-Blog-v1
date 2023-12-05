@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strona z Komentarzami</title>
+</head>
+<body>
+    <h1>Komentarze</h1>
+    <div id="comment-section">
+        <!-- Komunikat powitalny -->
+        <p>Witaj, użytkowniku!</p>
+        <!-- Pole do wprowadzania komentarzy -->
+        <textarea id="comment-input" placeholder="Dodaj komentarz..."></textarea>
+        <!-- Przycisk dodawania komentarza -->
+        <button onclick="addComment()">Dodaj Komentarz</button>
+    </div>
+
+    <!-- Skrypt wyświetlający komentarze -->
+    <script>
+        function addComment() {
+            var comment = document.getElementById('comment-input').value;
+            var commentContainer = document.getElementById('comment-section');
+            commentContainer.innerHTML += '<p>' + comment + '</p>';
+        }
+    </script>
+</body>
+</html>

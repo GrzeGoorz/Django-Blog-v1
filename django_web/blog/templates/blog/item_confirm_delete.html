@@ -1,0 +1,12 @@
+<!-- templates/item_confirm_delete.html -->
+{% extends 'blog/base.html' %}
+
+{% block content %}
+  <h2 class="display-4">Usuń Produkt</h2>
+  <p class="lead">Czy na pewno chcesz usunąć produkt "{{ item }}"?</p>
+  <form method="post" action="{% url 'item_delete' pk=item.pk %}" class="d-inline">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger btn-lg">Usuń</button>
+  </form>
+  <a href="{% url 'item_list' %}" class="btn btn-secondary btn-lg ml-2">Anuluj</a>
+{% endblock %}

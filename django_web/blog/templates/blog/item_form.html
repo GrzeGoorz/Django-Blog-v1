@@ -1,0 +1,49 @@
+<!-- templates/item_form.html -->
+{% extends 'blog/base.html' %}
+
+{% block content %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-body">
+            <h2 class="card-title">{% if form.instance.pk %}Edytuj produkt{% else %}Dodaj nowy produkt{% endif %}</h2>
+            <form method="post" action="{% if form.instance.pk %}{% url 'item_update' pk=form.instance.pk %}{% else %}{% url 'item_create' %}{% endif %}" class="form">
+              {% csrf_token %}
+
+              <div class="form-group">
+                <label for="id_product_name">Nazwa produktu:</label>
+                <input type="text" name="product_name" id="id_product_name" class="form-control" value="{% if form.product_name.value is not None and form.product_name.value != 0 %}{{ form.product_name.value }}{% else %}{% endif %}">
+                {% if form.product_name.errors %}
+                  <small class="text-danger">{{ form.product_name.errors|join:", " }}</small>
+                {% endif %}
+              </div>
+              <br>
+
+              <div class="form-group">
+                <label for="id_quantity">Ilość:</label>
+                <input type="number" name="quantity" id="id_quantity" class="form-control" value="{{ form.quantity.value }}">
+                {% if form.quantity.errors %}
+                  <small class="text-danger">{{ form.quantity.errors|join:", " }}</small>
+                {% endif %}
+              </div>
+              <br>
+
+              <div class="form-group">
+                <label for="id_location_name">Lokalizacja:</label>
+                <input type="text" name="location_name" id="id_location_name" class="form-control" value="{% if form.location_name.value is not None and form.location_name.value != 0 %}{{ form.location_name.value }}{% elif form.location_name.value == 0 %}{% else %}{% endif %}">
+                {% if form.location_name.value == 0 %}
+                  <small class="text-danger">Wartość niepoprawna</small>
+                {% endif %}
+              </div>
+              <br>
+
+              <button type="submit" class="btn btn-primary">Zapisz</button>
+            </form>
+            <a href="{% url 'item_list' %}" class="btn btn-secondary mt-2">Powrót do listy produktów</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

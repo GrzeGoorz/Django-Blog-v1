@@ -1,0 +1,83 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+  <h1>Wymiana Urządzeń</h1>
+  <form id="wymianaForm">
+    {% csrf_token %}
+    <label for="data_wymiany">Data wymiany:</label>
+    <input type="date" id="data_wymiany" name="data_wymiany" required>
+    <br>
+    <label for="ilosc_wymienionych">Ilość wymienionych urządzeń:</label>
+    <input type="number" id="ilosc_wymienionych" name="ilosc_wymienionych" required>
+    <br>
+    <button type="submit">Dodaj wymianę</button>
+  </form>
+
+  <canvas id="wykres"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var ctx = document.getElementById('wykres').getContext('2d');
+      var data = {
+        labels: [],  // dane z bazy danych
+        datasets: [{
+          label: 'Liczba wymienionych urządzeń',
+          borderColor: 'rgb(75, 192, 192)',
+          data: [],  // dane z bazy danych
+          fill: false,
+        }]
+      };
+
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              type: 'linear',
+              position: 'bottom',
+            },
+            y: {
+              min: 0,
+              max: 100,  // Zakładamy 100 urządzeń do wymiany
+            }
+          }
+        }
+      });
+
+      document.getElementById('wymianaForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+
+        fetch('/dodaj_wymiane/', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Zaktualizuj wykres, pobierając nowe dane z serwera
+                fetch('/prace/')
+                .then(response => response.json())
+                .then(data => {
+                    myChart.data.labels = data.labels;
+                    myChart.data.datasets[0].data = data.data;
+                    myChart.update();
+                })
+                .catch(error => {
+                    console.error('Błąd podczas pobierania danych z serwera:', error);
+                });
+            } else {
+                console.error('Błąd podczas zapisywania danych:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Błąd podczas komunikacji z serwerem:', error);
+        });
+      });
+    });
+  </script>
+{% endblock %}
