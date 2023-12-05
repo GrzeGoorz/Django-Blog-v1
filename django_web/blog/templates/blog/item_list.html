@@ -18,9 +18,9 @@
   <tbody>
     {% for item in items %}
     <tr>
-      <td>{{ item.product_name }}</td>
-      <td>{{ item.quantity }}</td>
-      <td>{{ item.location_name }}</td>
+      <td>{{ item.product_name | safe }}</td>
+      <td>{{ item.quantity | safe }}</td>
+      <td>{{ item.location_name | safe }}</td>
       <td>
         <a href="{% url 'item_update' pk=item.pk %}" class="btn btn-warning btn-sm">Edytuj</a>
         <a href="{% url 'item_delete' pk=item.pk %}" class="btn btn-danger btn-sm">Usuń</a>
@@ -29,8 +29,16 @@
     {% endfor %}
   </tbody>
 </table>
-<br>
 <a href="{% url 'item_create' %}" class="btn btn-success">Dodaj nowy produkt</a>
+<br><br>
+<br><br>
+<!-- Wykres -->
+<div>
+  <img src="{{ chart_image }}" alt="Wykres kołowy" width="500">
+</div>
+
+<br>
+
 
 
 {% endblock %}
